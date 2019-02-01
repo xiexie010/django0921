@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div class="card" style="margin:50px;width: 500px;min-height: 800px;">
+    <div class="card-header">
+        <span>一、表单测试</span>
+        <button type="button" class="btn btn-outline-dark float-right" data-toggle="modal"
+                data-target="#exampleModalCenter" data-whatever="@testtest">创建
+        </button>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">账号</th>
+                <th scope="col">密码</th>
+                <th scope="col">功能</th>
+            </tr>
+            </thead>
+            {% for item in users %}
+                <tr>
+                    <td>{{ item.username }}</td>
+                    <td>{{ item.password }}</td>
+                    <td onclick="f({{ item.id }})">设置
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+    <div class="card-footer ">
+        {#            <div id="test" onclick="f()">xiexie</div>#}
+        {% if users.has_previous %}
+            <a href="/one/home?page={{ users.previous_page_number }}">上一页</a>
+        {% else %}
+            <a>上一页</a>
+        {% endif %}
+        <a>{{ users.number }}</a>
+        {% if users.has_next %}
+            <a href="/one/home?page={{ users.next_page_number }}">下一页</a>
+        {% else %}
+            <a>下一页</a>
+        {% endif %}
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">创建用户</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">账号</label>
+                        <input type="text" class="form-control" id="exampleInputAccount1">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">密码</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="ff()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+<script>
+    currentdata=0
+
+
+
+    function ff() {
+        console.log($("#exampleInputAccount1").val())
+        console.log($("#exampleInputPassword1").val())
+        un=$("#exampleInputAccount1").val()
+        pw=$("#exampleInputPassword1").val()
+        $.post("one/createUser",{"username":un,"password":pw},function (data,shatus) {
+            console.log(data)
+        })
+        $("#exampleInputAccount1").val("")
+        $("#exampleInputPassword1").val("")
+    }
+
+
+    function f(btn) {
+        console.log(currentdata)
+        $.get("/one/getUserFromId/"+btn, function (data, status) {
+            console.log(data)
+            jsondata=JSON.parse(data);
+            if(jsondata.length>=0){
+                $("#exampleInputAccount1").val(jsondata[0]["fields"]["username"])
+                $("#exampleInputPassword1").val(jsondata[0]["fields"]["password"])
+            }
+            currentdata=jsondata[0]["fields"]["username"]
+
+        });
+
+
+        $("#exampleModalCenter").modal('show')
+    }
+
+
+</script>
+
+</html>
