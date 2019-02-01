@@ -102,6 +102,7 @@ def uploadform(request):
 def createUser(request):
     if request.method == "POST":
         print("createUser:"+request.POST.get("username"))
+        print("test git")
         f = Form1(request.POST)
         if f.is_valid():
             print("createUser--ok")
